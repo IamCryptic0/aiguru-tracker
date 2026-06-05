@@ -1,0 +1,14 @@
+{
+  "name": "aiguru-tracker",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "AI Guru — shared task tracker with cloud sync, login, and Google Chat alerts.",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel deploy --prod"
+  },
+  "dependencies": {
+    "@vercel/blob": "latest"
+  }
+}

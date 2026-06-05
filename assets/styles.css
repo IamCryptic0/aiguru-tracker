@@ -1,0 +1,112 @@
+:root{
+  --bg:#0f1521; --panel:#161e2e; --panel2:#1c2740; --line:#2a3650;
+  --text:#e8edf6; --muted:#93a1bd; --accent:#5b8cff; --accent2:#7c5cff;
+  --p0:#ff5d6c; --p1:#ffb020; --p2:#39c2a0;
+  --st-ns:#6b7891; --st-prog:#5b8cff; --st-block:#ff5d6c; --st-rev:#b07cff; --st-done:#39c2a0;
+  --shadow:0 10px 30px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:radial-gradient(1200px 600px at 80% -10%,#1b2740 0,var(--bg) 55%);color:var(--text)}
+header.top{position:sticky;top:0;z-index:30;backdrop-filter:blur(10px);
+  background:rgba(15,21,33,.85);border-bottom:1px solid var(--line);padding:16px 26px;
+  display:flex;align-items:center;gap:14px}
+.logo{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;font-size:21px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:var(--shadow)}
+h1{font-size:18px;margin:0}
+.sub{color:var(--muted);font-size:12.5px;margin-top:2px}
+.spacer{flex:1}
+.wrap{max-width:1280px;margin:0 auto;padding:22px 26px 90px}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:15px 17px;box-shadow:var(--shadow)}
+.card .num{font-size:26px;font-weight:700}
+.card .lbl{color:var(--muted);font-size:11.5px;text-transform:uppercase;letter-spacing:.6px;margin-top:2px}
+.card .bar{height:7px;border-radius:7px;background:var(--panel2);margin-top:11px;overflow:hidden}
+.card .bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--st-done),#5fe0c0);transition:width .4s}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 18px;box-shadow:var(--shadow)}
+.panel h3{margin:0 0 12px;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;font-weight:650}
+.legrow{display:flex;align-items:center;gap:10px;margin:9px 0;font-size:13px}
+.legrow .dot{width:11px;height:11px;border-radius:4px;flex-shrink:0}
+.legrow .track{flex:1;height:9px;border-radius:9px;background:var(--panel2);overflow:hidden}
+.legrow .track>i{display:block;height:100%;border-radius:9px;transition:width .4s}
+.legrow .cnt{min-width:30px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+.search{flex:1;min-width:200px;display:flex;align-items:center;gap:8px;background:var(--panel);
+  border:1px solid var(--line);border-radius:11px;padding:9px 13px}
+.search input{flex:1;background:none;border:0;color:var(--text);font-size:14px;outline:none}
+select.f,button.btn{background:var(--panel);color:var(--text);border:1px solid var(--line);
+  border-radius:11px;padding:9px 13px;font-size:13px;cursor:pointer}
+button.btn:hover,select.f:hover{border-color:var(--accent)}
+button.btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));border:0;font-weight:600}
+button.btn.ghost{background:transparent}
+.group{margin-bottom:18px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel)}
+.ghead{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--panel2);cursor:pointer;user-select:none}
+.ghead:hover{background:#22304d}
+.chev{color:var(--muted);transition:transform .2s;font-size:13px;width:14px;text-align:center}
+.group.collapsed .chev{transform:rotate(-90deg)}
+.tasknum{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-weight:800;font-size:15px;
+  color:#0f1521;background:linear-gradient(135deg,var(--accent),var(--accent2));flex-shrink:0}
+.gname{font-weight:700;font-size:15.5px}
+.gcount{color:var(--muted);font-size:12px}
+.gactions{margin-left:auto;display:flex;gap:8px}
+.btn.sm{padding:6px 11px;font-size:12px;border-radius:9px}
+.gbody{padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.group.collapsed .gbody{display:none}
+.row{display:grid;grid-template-columns:40px 1.3fr 1.8fr 128px 110px 122px 84px;gap:12px;align-items:center;
+  border:1px solid var(--line);border-left-width:7px;border-radius:11px;padding:12px 14px}
+.letter{font-size:18px;font-weight:800;text-align:center}
+.cell-sub .stitle{font-size:14px;font-weight:600;line-height:1.35}
+.cell-desc{font-size:12.5px;color:var(--muted);line-height:1.45}
+.cell-owner{display:flex;flex-wrap:wrap;gap:5px;align-content:flex-start}
+.owner-chip{display:inline-flex;align-items:center;gap:5px;background:#19233c;border:1px solid #2f436e;
+  color:#bcd0ff;padding:3px 9px;border-radius:20px;font-size:11.5px;white-space:nowrap}
+.extra{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
+.tag{font-size:11px;padding:2px 8px;border-radius:16px;border:1px solid var(--line);color:var(--muted)}
+.tag.dep{color:#cdb6ff;border-color:#3a2f63;background:#221a3a}
+.tag.time{color:#bcd0ff;border-color:#2f436e;background:#19233c}
+.tag.note{color:#cfd6e6}
+.statusbadge{display:flex;align-items:center;gap:7px;margin-bottom:6px}
+.statusbadge .pill{font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;letter-spacing:.3px}
+select.inline{width:100%;border-radius:9px;padding:7px 9px;font-size:12px;cursor:pointer;font-weight:800;
+  border:2px solid transparent;outline:none}
+.rowact{display:flex;flex-direction:column;gap:6px}
+.rowact button{width:100%;padding:6px 4px;font-size:11.5px;border-radius:8px;border:1px solid var(--line);
+  background:var(--panel);color:var(--muted);cursor:pointer}
+.rowact button.edit:hover{border-color:var(--accent);color:#bcd0ff}
+.rowact button.del:hover{border-color:var(--p0);color:#ffc6cc}
+.overlay{position:fixed;inset:0;background:rgba(8,11,18,.72);backdrop-filter:blur(4px);z-index:50;
+  display:none;align-items:center;justify-content:center;padding:20px}
+.overlay.open{display:flex}
+.modal{width:100%;max-width:560px;background:var(--panel);border:1px solid var(--line);border-radius:18px;
+  box-shadow:var(--shadow);max-height:90vh;overflow:auto}
+.modal>header{padding:18px 22px;border-bottom:1px solid var(--line);font-size:16px;font-weight:650;background:none;position:static}
+.modal .mbody{padding:20px 22px;display:grid;gap:14px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.field .hint{font-size:11px;color:var(--muted);text-transform:none;letter-spacing:0;font-weight:400}
+.field input,.field textarea,.field select{background:var(--panel2);color:var(--text);border:1px solid var(--line);
+  border-radius:10px;padding:10px 12px;font-size:14px;outline:none;font-family:inherit}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent)}
+.field textarea{resize:vertical;min-height:64px}
+.ownerpick{display:flex;flex-wrap:wrap;gap:7px;margin-top:2px}
+.ownerpick button{font-size:12px;padding:5px 11px;border-radius:20px;border:1px dashed var(--line);
+  background:transparent;color:var(--muted);cursor:pointer}
+.ownerpick button:hover{border-color:var(--accent);color:#bcd0ff}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.modal>footer{padding:16px 22px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:10px}
+.modal>footer .left{margin-right:auto}
+.empty{text-align:center;color:var(--muted);padding:50px 0}
+@media (max-width:880px){.row{grid-template-columns:1fr;gap:8px}.split{grid-template-columns:1fr}.rowact{flex-direction:row}}
+
+/* ---- login page ---- */
+.login-wrap{min-height:100vh;display:grid;place-items:center;padding:24px}
+.login-card{width:100%;max-width:380px;background:var(--panel);border:1px solid var(--line);
+  border-radius:20px;padding:32px 28px;box-shadow:var(--shadow);text-align:center}
+.login-card .logo{margin:0 auto 16px}
+.login-card h1{font-size:20px;margin:0 0 4px}
+.login-card p{color:var(--muted);font-size:13px;margin:0 0 22px}
+.login-card .field{text-align:left;margin-bottom:14px}
+.login-card input{width:100%}
+.login-card button{width:100%;justify-content:center}
+.login-err{color:#ffc6cc;font-size:13px;min-height:18px;margin-top:4px}

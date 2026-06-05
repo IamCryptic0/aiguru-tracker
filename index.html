@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Guru — Task Tracker</title>
+<link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+<header class="top">
+  <div class="logo">&#129504;</div>
+  <div><h1>AI Guru — Task Tracker</h1><div class="sub">Tasks - Subtasks - Priority &amp; Status</div></div>
+  <div class="spacer"></div>
+  <span id="syncState" title="Shared cloud sync" style="font-size:12px;color:var(--muted);display:inline-flex;align-items:center;gap:6px;margin-right:6px"><span id="syncDot" style="width:9px;height:9px;border-radius:50%;background:#8a97ad;display:inline-block"></span><span id="syncText">Connecting…</span></span>
+  <button class="btn" id="expandAll">Expand all</button>
+  <button class="btn" id="collapseAll">Collapse all</button>
+  <button class="btn primary" id="addGroupBtn">+ Add Task</button>
+  <button class="btn" id="exportBtn">Export</button>
+  <button class="btn" id="logoutBtn">Logout</button>
+</header>
+
+<div class="wrap">
+  <div class="metrics" id="metrics"></div>
+  <div class="split">
+    <div class="panel"><h3>By Status</h3><div id="byStatus"></div></div>
+    <div class="panel"><h3>By Priority</h3><div id="byPriority"></div></div>
+  </div>
+  <div class="toolbar">
+    <div class="search">&#128269; <input id="q" placeholder="Search tasks, descriptions, owners…"></div>
+    <select class="f" id="fGroup"><option value="">All tasks</option></select>
+    <select class="f" id="fOwner"><option value="">All owners</option></select>
+    <select class="f" id="fPrio"><option value="">All priorities</option><option>P0</option><option>P1</option><option>P2</option></select>
+    <select class="f" id="fStatus"><option value="">All statuses</option><option>Not Started</option><option>In Progress</option><option>Blocked</option><option>In Review</option><option>Done</option></select>
+  </div>
+  <div id="board"></div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <header id="modalTitle">Add Subtask</header>
+    <div class="mbody">
+      <div class="field"><label>Task (group)</label><input id="m_group" list="groupList" placeholder="e.g. Dashboard"><datalist id="groupList"></datalist></div>
+      <div class="field"><label>Subtask title</label><input id="m_sub" placeholder="Short title"></div>
+      <div class="field"><label>Description</label><textarea id="m_desc" placeholder="What needs to be done"></textarea></div>
+      <div class="field">
+        <label>Owner(s) <span class="hint">— separate multiple with commas</span></label>
+        <input id="m_owner" placeholder="e.g. Ashok, Abhishek">
+        <div class="ownerpick" id="ownerPick"></div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>Priority</label><select id="m_prio"><option>P0</option><option>P1</option><option selected>P2</option></select></div>
+        <div class="field"><label>Status</label><select id="m_status"><option selected>Not Started</option><option>In Progress</option><option>Blocked</option><option>In Review</option><option>Done</option></select></div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>Timeline</label><input id="m_time" placeholder="e.g. Jun W2"></div>
+        <div class="field"><label>Dependencies</label><input id="m_dep" placeholder="e.g. G-01"></div>
+      </div>
+      <div class="field"><label>Notes</label><input id="m_note" placeholder="Optional"></div>
+    </div>
+    <footer>
+      <button class="btn ghost left" id="deleteSubBtn" style="display:none;color:#ffc6cc;border-color:#5a2f37">Delete</button>
+      <button class="btn" id="cancelBtn">Cancel</button>
+      <button class="btn primary" id="saveBtn">Save</button>
+    </footer>
+  </div>
+</div>
+
+<div class="overlay" id="goverlay">
+  <div class="modal">
+    <header id="gmodalTitle">Add Task</header>
+    <div class="mbody">
+      <div class="field"><label>Task name</label><input id="g_name" placeholder="e.g. Dashboard"></div>
+      <div class="field" id="gFirstField"><label>First subtask title (optional)</label><input id="g_first" placeholder="e.g. Soft delete functionality"></div>
+    </div>
+    <footer>
+      <button class="btn ghost left" id="gDeleteBtn" style="display:none;color:#ffc6cc;border-color:#5a2f37">Delete task &amp; subtasks</button>
+      <button class="btn" id="gCancelBtn">Cancel</button>
+      <button class="btn primary" id="gSaveBtn">Save</button>
+    </footer>
+  </div>
+</div>
+<script src="/assets/data.js"></script>
+<script src="/assets/app.js"></script>
+</body>
+</html>
