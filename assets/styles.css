@@ -110,3 +110,11 @@ select.inline{width:100%;border-radius:9px;padding:7px 9px;font-size:12px;cursor
 .login-card input{width:100%}
 .login-card button{width:100%;justify-content:center}
 .login-err{color:#ffc6cc;font-size:13px;min-height:18px;margin-top:4px}
+
+/* ---- auth gate (covers app until login is verified) ---- */
+#authGate{position:fixed;inset:0;z-index:100;background:var(--bg);display:grid;place-items:center}
+#authGate .gate-inner{display:flex;flex-direction:column;align-items:center;gap:16px}
+#authGate .spinner{width:34px;height:34px;border-radius:50%;border:3px solid var(--line);
+  border-top-color:var(--accent);animation:gate-spin .8s linear infinite}
+#authGate .gate-text{color:var(--muted);font-size:13px}
+@keyframes gate-spin{to{transform:rotate(360deg)}}

@@ -266,7 +266,7 @@ async function remotePush(){
 async function remotePull(initial){
   try{
     const res=await fetch(API,{cache:"no-store"});
-    if(res.status===401){ location.href="/login"; return false; }
+    if(res.status===401){ location.replace("/login"); return false; }
     const j=await res.json();
     if(j&&Array.isArray(j.data)&&j.data.length&&(j.updatedAt||0)>lastSync){
       data=j.data; collapsed=j.collapsed||{}; lastSync=j.updatedAt||Date.now();
@@ -279,11 +279,34 @@ async function remotePull(initial){
     return true;
   }catch(e){ setSync("offline"); return false; }
 }
+function revealApp(){ const g=document.getElementById("authGate"); if(g) g.remove(); }
+function startPolling(){ setInterval(()=>{ if(!modalOpen()&&!pushing) remotePull(false); }, 5000); }
+
+// Verify auth and load data BEFORE showing the app (no flash of the tracker pre-login).
 async function boot(){
-  render();              // instant paint from localStorage / SEED
   setSync("loading");
-  await remotePull(true);
-  setInterval(()=>{ if(!modalOpen()&&!pushing) remotePull(false); }, 5000);
+  try{
+    const res=await fetch(API,{cache:"no-store"});
+    if(res.status===401){ location.replace("/login"); return; }   // not logged in -> never render the app
+    const j=await res.json();
+    if(j&&Array.isArray(j.data)&&j.data.length){
+      data=j.data; collapsed=j.collapsed||{}; lastSync=j.updatedAt||Date.now();
+      localStorage.setItem(LS,JSON.stringify(data)); localStorage.setItem(LSC,JSON.stringify(collapsed));
+      setSync("synced");
+    } else {
+      // authed but cloud is empty -> seed it from local/SEED
+      render(); revealApp();
+      await remotePush();
+      startPolling();
+      return;
+    }
+  }catch(e){
+    // offline: fall back to local cache (online unauthed users already got redirected on 401)
+    setSync("offline");
+  }
+  render();
+  revealApp();
+  startPolling();
 }
 
 // ---- Google Chat notification on new task (server-side webhook via /api/notify) ----
