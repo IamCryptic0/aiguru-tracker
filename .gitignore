@@ -3,9 +3,10 @@ node_modules/
 
 # vercel
 .vercel
+
+# env (local secrets — never commit)
 .env
 .env.*
-!.env.example
 
 # os / editor
 .DS_Store
