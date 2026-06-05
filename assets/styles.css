@@ -118,3 +118,7 @@ select.inline{width:100%;border-radius:9px;padding:7px 9px;font-size:12px;cursor
   border-top-color:var(--accent);animation:gate-spin .8s linear infinite}
 #authGate .gate-text{color:var(--muted);font-size:13px}
 @keyframes gate-spin{to{transform:rotate(360deg)}}
+
+/* selected owner pill in the multi-select */
+.ownerpick button.on{border-style:solid;border-color:var(--accent);
+  background:rgba(91,140,255,.18);color:#bcd0ff;font-weight:600}

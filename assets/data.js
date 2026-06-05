@@ -3,6 +3,7 @@ const STATUSES=["Not Started","In Progress","Blocked","In Review","Done"];
 const ST_HEX={"Not Started":"#8a97ad","In Progress":"#5b8cff","Blocked":"#ff5d6c","In Review":"#b07cff","Done":"#39c2a0"};
 const P_HEX={P0:"#ff5d6c",P1:"#ffb020",P2:"#39c2a0"};
 const LETTERS="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const TEAM=["Ashok","Abhishek","Daksh","Subha","Prafful","Aditya","Mihir","Gautam","Imtiaz","Reyvant"];
 function rgba(hex,a){const n=parseInt(hex.slice(1),16);return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`}
 
 const SEED=[

@@ -126,11 +126,17 @@ function renderMetrics(){
 
 document.getElementById("board").addEventListener("change",e=>{
   const sel=e.target.closest("select.inline");
-  if(sel){ data[+sel.dataset.idx][sel.dataset.field]=sel.value; save(); render(); }
+  if(sel){
+    const d=data[+sel.dataset.idx], field=sel.dataset.field, from=d[field], to=sel.value;
+    if(from!==to){
+      d[field]=to; save(); render();
+      notifyEvent({kind:"subtask_updated", task:{...d}, changes:[{label: field==="prio"?"Priority":"Status", from:from||"—", to:to||"—"}]});
+    }
+  }
 });
 document.getElementById("board").addEventListener("click",e=>{
   const t=e.target;
-  const del=t.closest("[data-del]"); if(del){ if(confirm("Delete this subtask?")){data.splice(+del.dataset.del,1);save();render();} return; }
+  const del=t.closest("[data-del]"); if(del){ const idx=+del.dataset.del, victim={...data[idx]}; if(confirm("Delete this subtask?")){data.splice(idx,1);save();render();notifyEvent({kind:"subtask_deleted", task:victim});} return; }
   const ed=t.closest("[data-edit]"); if(ed){ openSub(+ed.dataset.edit); return; }
   const add=t.closest("[data-addsub]"); if(add){ openSub(null, add.dataset.addsub); return; }
   const eg=t.closest("[data-editgroup]"); if(eg){ openGroup(eg.dataset.editgroup); return; }
@@ -150,13 +156,17 @@ function suggestId(group){
   for(const L of "abcdefghijklmnopqrstuvwxyz"){ const c=base+L; if(!ids.includes(c)) return c; }
   return base+"-x";
 }
+function ownersFromInput(){ return m_owner.value.split(",").map(s=>s.trim()).filter(Boolean); }
+function setOwners(arr){ m_owner.value=[...new Set(arr)].join(", "); }
 function renderOwnerPick(){
   const pick=document.getElementById("ownerPick");
   const chosen=ownersFromInput();
-  const avail=allOwners().filter(o=>!chosen.includes(o));
-  pick.innerHTML=avail.length? avail.map(o=>`<button type="button" data-add-owner="${esc(o)}">+ ${esc(o)}</button>`).join("") : "";
+  const names=[...new Set([...TEAM, ...chosen])]; // TEAM list + any legacy names already on the task
+  pick.innerHTML=names.map(n=>{
+    const on=chosen.includes(n);
+    return `<button type="button" class="ownerchip${on?' on':''}" data-owner="${esc(n)}">${on?'✓ ':''}${esc(n)}</button>`;
+  }).join("");
 }
-function ownersFromInput(){ return m_owner.value.split(",").map(s=>s.trim()).filter(Boolean); }
 function openSub(index, presetGroup){
   editIndex=index;
   document.getElementById("modalTitle").textContent = index==null ? "Add Subtask" : "Edit Subtask";
@@ -173,13 +183,13 @@ function openSub(index, presetGroup){
 function closeSub(){ overlay.classList.remove("open"); editIndex=null; }
 document.getElementById("cancelBtn").onclick=closeSub;
 overlay.addEventListener("click",e=>{if(e.target===overlay)closeSub()});
-m_owner.addEventListener("input",renderOwnerPick);
 document.getElementById("ownerPick").addEventListener("click",e=>{
-  const b=e.target.closest("[data-add-owner]"); if(!b)return;
-  const cur=ownersFromInput(); cur.push(b.dataset.addOwner);
-  m_owner.value=cur.join(", "); renderOwnerPick(); m_owner.focus();
+  const b=e.target.closest("[data-owner]"); if(!b)return;
+  const name=b.dataset.owner, cur=ownersFromInput(), i=cur.indexOf(name);
+  if(i>=0) cur.splice(i,1); else cur.push(name);
+  setOwners(cur); renderOwnerPick();
 });
-document.getElementById("deleteSubBtn").onclick=()=>{ if(editIndex!=null&&confirm("Delete this subtask?")){data.splice(editIndex,1);save();closeSub();render();} };
+document.getElementById("deleteSubBtn").onclick=()=>{ if(editIndex!=null&&confirm("Delete this subtask?")){const victim={...data[editIndex]};data.splice(editIndex,1);save();closeSub();render();notifyEvent({kind:"subtask_deleted", task:victim});} };
 document.getElementById("saveBtn").onclick=()=>{
   const group=m_group.value.trim()||"Ungrouped";
   const existing = editIndex==null ? null : data[editIndex];
@@ -188,9 +198,11 @@ document.getElementById("saveBtn").onclick=()=>{
     desc:m_desc.value.trim(),owner,prio:m_prio.value,status:m_status.value,
     dep:m_dep.value.trim(),time:m_time.value.trim(),note:m_note.value.trim()};
   const isNew = editIndex==null;
+  const before = isNew ? null : {...data[editIndex]};
   if(isNew) data.push(rec); else data[editIndex]=rec;
   save(); closeSub(); render();
-  if(isNew) notifyNewTask(rec);
+  if(isNew){ notifyEvent({kind:"subtask_added", task:rec}); }
+  else { const changes=diffTask(before, rec); if(changes.length) notifyEvent({kind:"subtask_updated", task:rec, changes}); }
 };
 
 const goverlay=document.getElementById("goverlay");
@@ -208,9 +220,10 @@ document.getElementById("gCancelBtn").onclick=closeGroup;
 goverlay.addEventListener("click",e=>{if(e.target===goverlay)closeGroup()});
 document.getElementById("gSaveBtn").onclick=()=>{
   const name=g_name.value.trim(); if(!name){g_name.focus();return;}
-  let newGroupRec=null;
+  let newGroupRec=null, renamedFrom=null;
   if(editGroupName){
     if(name!==editGroupName){
+      renamedFrom=editGroupName;
       data.forEach(d=>{ if(d.group===editGroupName) d.group=name; });
       if(collapsed[editGroupName]){ collapsed[name]=true; delete collapsed[editGroupName]; saveCollapsed(); }
     }
@@ -221,12 +234,15 @@ document.getElementById("gSaveBtn").onclick=()=>{
     data.push(newGroupRec);
   }
   save(); closeGroup(); render();
-  if(newGroupRec && newGroupRec.sub) notifyNewTask(newGroupRec);
+  if(newGroupRec) notifyEvent({kind:"task_added", group:name, task:newGroupRec.sub?newGroupRec:null});
+  else if(renamedFrom) notifyEvent({kind:"task_renamed", from:renamedFrom, to:name});
 };
 document.getElementById("gDeleteBtn").onclick=()=>{
   if(editGroupName&&confirm('Delete task "'+editGroupName+'" and all its subtasks?')){
-    data=data.filter(d=>d.group!==editGroupName); delete collapsed[editGroupName];
+    const grp=editGroupName, count=data.filter(d=>d.group===grp).length;
+    data=data.filter(d=>d.group!==grp); delete collapsed[grp];
     save(); saveCollapsed(); closeGroup(); render();
+    notifyEvent({kind:"task_deleted", group:grp, count});
   }
 };
 
@@ -309,9 +325,15 @@ async function boot(){
   startPolling();
 }
 
-// ---- Google Chat notification on new task (server-side webhook via /api/notify) ----
-async function notifyNewTask(task){
-  try{ await fetch("/api/notify",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({task})}); }catch(e){}
+// ---- Google Chat notifications (server-side webhook via /api/notify) ----
+async function notifyEvent(event){
+  try{ await fetch("/api/notify",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({event})}); }catch(e){}
+}
+function diffTask(oldT,newT){
+  const fields={group:"Task",sub:"Title",desc:"Description",owner:"Owner(s)",prio:"Priority",status:"Status",dep:"Dependencies",time:"Timeline",note:"Notes"};
+  const out=[];
+  for(const k in fields){ if((oldT[k]||"")!==(newT[k]||"")) out.push({label:fields[k], from:oldT[k]||"—", to:newT[k]||"—"}); }
+  return out;
 }
 
 // ---- logout ----
